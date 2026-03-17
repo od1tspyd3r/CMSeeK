@@ -63,7 +63,22 @@ def diff_json(old: Any, new: Any, path: Path = ()) -> List[DiffItem]:
         return items
 
     if isinstance(old, list) and isinstance(new, list):
-        # Keep it simple/robust: compare by index.
+        # Prefer stable diffing for lists of dicts that contain a "name" field (plugins/themes/users, etc).
+        def _list_named_map(lst: list) -> Dict[str, Any]:
+            m: Dict[str, Any] = {}
+            for it in lst:
+                if isinstance(it, dict) and isinstance(it.get("name"), str) and it["name"]:
+                    m[it["name"]] = it
+                else:
+                    return {}
+            return m
+
+        old_named = _list_named_map(old)
+        new_named = _list_named_map(new)
+        if old_named and new_named:
+            return diff_json(old_named, new_named, path)
+
+        # Fallback: compare by index.
         max_len = max(len(old), len(new))
         for i in range(max_len):
             if i >= len(old):
