@@ -206,12 +206,19 @@ def start(id, url, ua, ga, source, detection_method):
 
 
         if plugins_found != 0:
-            plugs_count = len(plugins)
+            plugins_sorted = sorted(list(plugins))
+            plugs_count = len(plugins_sorted)
             sresult.init_item("Plugins Enumerated: " + cmseek.bold + cmseek.fgreen + str(plugs_count) + cmseek.cln)
             wpplugs = ""
-            for i, plugin in enumerate(plugins):
+            wp_plugins_list = []
+            for i, plugin in enumerate(plugins_sorted):
                 plug = plugin.split(':')
                 wpplugs = wpplugs + plug[0] + ' Version ' + plug[1] + ','
+                wp_plugins_list.append({
+                    "name": plug[0],
+                    "version": plug[1],
+                    "url": url + '/wp-content/plugins/' + plug[0]
+                })
                 if i == 0 and i != plugs_count - 1:
                     sresult.init_sub('Plugin: ' + cmseek.bold + cmseek.fgreen + plug[0] + cmseek.cln)
                     sresult.init_subsub('Version: ' + cmseek.bold + cmseek.fgreen + plug[1] + cmseek.cln)
@@ -227,16 +234,27 @@ def start(id, url, ua, ga, source, detection_method):
                     sresult.init_subsub('Version: ' + cmseek.bold + cmseek.fgreen + plug[1] + cmseek.cln)
                     sresult.end_subsub('URL: ' + cmseek.fgreen + url + '/wp-content/plugins/' + plug[0] + cmseek.cln)
             cmseek.update_log('wp_plugins', wpplugs)
+            cmseek.update_log('wp_plugins_list', wp_plugins_list, False)
             sresult.empty_item()
 
         if themes_found != 0:
-            thms_count = len(themes)
+            themes_sorted = sorted(list(themes))
+            thms_count = len(themes_sorted)
             sresult.init_item("Themes Enumerated: " + cmseek.bold + cmseek.fgreen + str(thms_count) + cmseek.cln)
             wpthms = ""
-            for i,theme in enumerate(themes):
+            wp_themes_list = []
+            for i,theme in enumerate(themes_sorted):
                 thm = theme.split(':')
                 thmz = thm[1].split('|')
                 wpthms = wpthms + thm[0] + ' Version ' + thmz[0] + ','
+                theme_obj = {
+                    "name": thm[0],
+                    "version": thmz[0],
+                    "url": url + '/wp-content/themes/' + thm[0]
+                }
+                if thmz[1] != '':
+                    theme_obj["zip_url"] = url + thmz[1]
+                wp_themes_list.append(theme_obj)
                 if i == 0 and i != thms_count - 1:
                     sresult.init_sub('Theme: ' + cmseek.bold + cmseek.fgreen + thm[0] + cmseek.cln)
                     sresult.init_subsub('Version: ' + cmseek.bold + cmseek.fgreen + thmz[0] + cmseek.cln)
@@ -257,6 +275,7 @@ def start(id, url, ua, ga, source, detection_method):
                         sresult.subsub('Theme Zip: ' + cmseek.bold + cmseek.fgreen + url + thmz[1] + cmseek.cln)
                     sresult.end_subsub('URL: ' + cmseek.fgreen + url + '/wp-content/themes/' + thm[0] + cmseek.cln)
             cmseek.update_log('wp_themes', wpthms)
+            cmseek.update_log('wp_themes_list', wp_themes_list, False)
             sresult.empty_item()
 
 
