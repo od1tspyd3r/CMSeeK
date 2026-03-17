@@ -121,6 +121,9 @@ def run_scan_async(scan_id: int, target: str, opts: Dict[str, Any]) -> None:
 
 def create_app() -> Flask:
     app = Flask(__name__)
+    # This is a local dev UI; auto-reload templates for faster iteration.
+    app.config["TEMPLATES_AUTO_RELOAD"] = True
+    app.jinja_env.auto_reload = True
     db.init_db()
 
     @app.get("/")

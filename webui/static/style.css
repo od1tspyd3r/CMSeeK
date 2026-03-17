@@ -99,6 +99,58 @@ input:focus { border-color: rgba(122, 162, 255, .7); box-shadow: 0 0 0 3px rgba(
   max-height: 520px;
 }
 
+.jsonview {
+  background: rgba(7, 11, 22, .45);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.jsonnode {
+  border-left: 2px solid rgba(122, 162, 255, .18);
+  margin: 6px 0;
+  padding-left: 10px;
+}
+
+.jsonrow {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(35, 48, 74, .55);
+}
+.jsonrow:last-child { border-bottom: 0; }
+.jsonkey { color: var(--muted); font-size: 12px; }
+.jsonval { color: var(--text); }
+.jsonmeta { color: var(--muted); font-size: 12px; }
+
+details.jsondetails > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid rgba(35, 48, 74, .7);
+  border-radius: 12px;
+  background: rgba(7, 11, 22, .35);
+}
+details.jsondetails > summary::-webkit-details-marker { display: none; }
+details.jsondetails[open] > summary { border-color: rgba(122, 162, 255, .35); }
+details.jsondetails .chev {
+  width: 0;
+  height: 0;
+  border-left: 6px solid var(--muted);
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  opacity: .9;
+  transition: transform .12s ease-in-out;
+}
+details.jsondetails[open] .chev { transform: rotate(90deg); }
+
+.jsonsummarykey { font-weight: 700; color: var(--text); }
+.jsonsummarymeta { color: var(--muted); font-size: 12px; }
+
 .row { display: flex; gap: 14px; align-items: flex-start; justify-content: space-between; }
 .right { display: flex; gap: 10px; }
 .meta { display: grid; gap: 6px; }
@@ -122,5 +174,6 @@ input:focus { border-color: rgba(122, 162, 255, .7); box-shadow: 0 0 0 3px rgba(
   .grid2 { grid-template-columns: 1fr; }
   .span2 { grid-column: auto; }
   .row { flex-direction: column; }
+  .jsonrow { grid-template-columns: 1fr; }
 }
 

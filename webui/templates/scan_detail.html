@@ -63,9 +63,51 @@
   {% endif %}
 
   <section class="card">
-    <h2>Result JSON (latest parsed)</h2>
+    <h2>Result (formatted)</h2>
+    {% macro render_json(value, key_name=None) -%}
+      {%- if value is mapping -%}
+        <details class="jsondetails" open>
+          <summary>
+            <span class="chev"></span>
+            <span class="jsonsummarykey">{{ key_name if key_name else "object" }}</span>
+            <span class="jsonsummarymeta">{{ value | length }} keys</span>
+          </summary>
+          <div class="jsonnode">
+            {%- for k, v in value.items() -%}
+              <div class="jsonrow">
+                <div class="jsonkey mono">{{ k }}</div>
+                <div class="jsonval">
+                  {{ render_json(v) }}
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+        </details>
+      {%- elif value is sequence and value is not string -%}
+        <details class="jsondetails">
+          <summary>
+            <span class="chev"></span>
+            <span class="jsonsummarykey">{{ key_name if key_name else "list" }}</span>
+            <span class="jsonsummarymeta">{{ value | length }} items</span>
+          </summary>
+          <div class="jsonnode">
+            {%- for item in value -%}
+              <div class="jsonrow">
+                <div class="jsonkey mono">[{{ loop.index0 }}]</div>
+                <div class="jsonval">{{ render_json(item) }}</div>
+              </div>
+            {%- endfor -%}
+          </div>
+        </details>
+      {%- else -%}
+        <span class="mono">{{ value }}</span>
+      {%- endif -%}
+    {%- endmacro %}
+
     {% if result_obj %}
-      <pre class="pre">{{ result_obj | tojson(indent=2) }}</pre>
+      <div class="jsonview">
+        {{ render_json(result_obj, "cms.json") }}
+      </div>
     {% else %}
       <p class="hint">No parsed result JSON found yet (scan may still be running).</p>
     {% endif %}
