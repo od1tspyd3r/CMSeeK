@@ -114,6 +114,7 @@ def scan(content):
                 'rbs change:-rbsc',
                 'sazito:-sazito',
                 'shopfa:-shopfa',
+                'hubspot:-hubspot',
                 'solusquare:-solusquare',
                 'amiro.cms||www.amiro.ru:-amiro',
                 'starfield technologies; go daddy website builder:-godaddywb',

@@ -17,6 +17,7 @@ import cmseekdb.result as sresult
 import time
 import re
 import os
+import json
 
 def start(id, url, ua, ga, source, detection_method):
     '''
@@ -41,7 +42,7 @@ def start(id, url, ua, ga, source, detection_method):
             cmseek.statement('Checking if the detection is false positive')
             #temp_domain = re.findall('^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n\?\=]+)', url)[0]
             #wp_match_pattern = temp_domain + '\/wp-(content|include|admin)\/'  # False Negative, because usually '/wp-content' without domain in source
-            if not re.search('\/wp-(content|include|admin)\/', source):
+            if not re.search(r'/wp-(content|include|admin)/', source):
                 cmseek.error('Detection was false positive! CMSeeK is quitting!')
                 cmseek.success('Run CMSeeK with {0}{1}{2} argument next time'.format(cmseek.fgreen, '--ignore-cms wp', cmseek.cln))
                 #cmseek.handle_quit()
@@ -49,6 +50,20 @@ def start(id, url, ua, ga, source, detection_method):
 
         # Version detection
         version = wordpress_version_detect.start(id, url, ua, ga, source)
+
+        # Fetch latest WordPress release (official API) so CMSeeK stays current without hardcoding.
+        latest_wp = '0'
+        latest_wp_api = "https://api.wordpress.org/core/version-check/1.7/"
+        latest_src = cmseek.getsource(latest_wp_api, ua)
+        if latest_src[0] == '1':
+            try:
+                latest_json = json.loads(latest_src[1])
+                offers = latest_json.get("offers", [])
+                if offers:
+                    # Typically the first offer is the newest stable.
+                    latest_wp = offers[0].get("current", '0') or '0'
+            except Exception:
+                latest_wp = '0'
 
         ## Check for minor stuffs like licesnse readme and some open directory checks
         cmseek.statement("Initiating open directory and files check")
@@ -325,7 +340,7 @@ def start(id, url, ua, ga, source, detection_method):
                             #sresult.subsub("Link: " + cmseek.bold + cmseek.fgreen + "http://wpvulndb.com/vulnerabilities/" + str(vuln['id']) + cmseek.cln, False, True)
                             strvuln = str(vuln)
                             if vuln['cve'] != "":
-                                sresult.subsub("CVE: " + cmseek.fgreen + "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-" + str(ref) + cmseek.cln, False, True)
+                                sresult.subsub("CVE: " + cmseek.fgreen + "http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-" + vuln["cve"] + cmseek.cln, False, True)
                                     
 
                             if vuln["references"] != []:
@@ -333,6 +348,13 @@ def start(id, url, ua, ga, source, detection_method):
                                     sresult.subsub("Reference: " + cmseek.fgreen + str(ref) + cmseek.cln, False, True)
 
                             sresult.end_subsub("Fixed In Version: " + cmseek.bold + cmseek.fgreen + str(vuln['fixed_in']) + cmseek.cln, False, True)
+
+        if latest_wp != '0':
+            cmseek.update_log('wp_latest_version', latest_wp)
+            if version != '0' and version != latest_wp:
+                sresult.item('Latest WordPress version (official): ' + cmseek.bold + cmseek.orange + latest_wp + cmseek.cln)
+            else:
+                sresult.item('Latest WordPress version (official): ' + cmseek.bold + cmseek.fgreen + latest_wp + cmseek.cln)
         sresult.end(str(cmseek.total_requests), str(comptime), log_file)
         return
 

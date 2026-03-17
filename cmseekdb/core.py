@@ -24,6 +24,7 @@ import cmseekdb.dirscheck as dirscheck # Containts function to detect CMS by dir
 import cmseekdb.robots as robots
 import cmseekdb.generator as generator
 import cmseekdb.result as result
+import cmseekdb.latest_versions as latest_versions
 
 def main_proc(site,cua):
 
@@ -161,6 +162,28 @@ def main_proc(site,cua):
             if cms_version != '0' and cms_version != None:
                 cmseek.update_log('cms_version', cms_version) # update log
             cmseek.update_log('cms_url', cms_info['url']) # update log
+
+            # Upstream "latest stable" hints for some self-hosted CMSes.
+            latest = '0'
+            if cms == 'dru':
+                latest = latest_versions.latest_drupal(cua)
+                if latest != '0':
+                    cmseek.update_log('latest_version', latest)
+                    result.menu('[Upstream version]')
+                    if cms_version != '0' and cms_version != None and cms_version != latest:
+                        result.init_item('Latest stable (official): ' + cmseek.bold + cmseek.orange + latest + cmseek.cln)
+                    else:
+                        result.init_item('Latest stable (official): ' + cmseek.bold + cmseek.fgreen + latest + cmseek.cln)
+            elif cms == 'joom':
+                latest = latest_versions.latest_joomla(cua)
+                if latest != '0':
+                    cmseek.update_log('latest_version', latest)
+                    result.menu('[Upstream version]')
+                    if cms_version != '0' and cms_version != None and cms_version != latest:
+                        result.init_item('Latest stable (official): ' + cmseek.bold + cmseek.orange + latest + cmseek.cln)
+                    else:
+                        result.init_item('Latest stable (official): ' + cmseek.bold + cmseek.fgreen + latest + cmseek.cln)
+
             comptime = round(time.time() - cmseek.cstart, 2)
             log_file = os.path.join(cmseek.log_dir, 'cms.json')
             result.end(str(cmseek.total_requests), str(comptime), log_file)

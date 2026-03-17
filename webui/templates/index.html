@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% block content %}
+  <section class="card">
+    <h2>New scan</h2>
+    <form method="post" action="{{ url_for('start_scan') }}" class="form">
+      <label>
+        Target URL
+        <input name="target" placeholder="https://example.com" required />
+      </label>
+
+      <div class="grid">
+        <label class="check"><input type="checkbox" name="random_agent" /> Random agent</label>
+        <label class="check"><input type="checkbox" name="googlebot" /> Googlebot</label>
+        <label class="check"><input type="checkbox" name="follow_redirect" /> Follow redirects</label>
+        <label class="check"><input type="checkbox" name="no_redirect" /> No redirects</label>
+        <label class="check"><input type="checkbox" name="light_scan" /> Light scan</label>
+        <label class="check"><input type="checkbox" name="only_cms" /> Only CMS</label>
+      </div>
+
+      <div class="grid2">
+        <label>
+          Strict CMS IDs (comma-separated)
+          <input name="strict_cms" placeholder="wp,joom,dru" />
+        </label>
+        <label>
+          Ignore CMS IDs (comma-separated)
+          <input name="ignore_cms" placeholder="wp" />
+        </label>
+        <label class="span2">
+          Custom User-Agent
+          <input name="user_agent" placeholder="Mozilla/5.0 ..." />
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn" type="submit">Start scan</button>
+      </div>
+      <p class="hint">Runs locally and stores results in SQLite for diffing.</p>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Recent scans</h2>
+    {% if scans %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Target</th>
+            <th>Status</th>
+            <th>Exit</th>
+            <th>When</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in scans %}
+            <tr>
+              <td><a href="{{ url_for('scan_detail', scan_id=s['id']) }}">{{ s['id'] }}</a></td>
+              <td class="mono">{{ s['target'] }}</td>
+              <td><span class="pill {{ s['status'] }}">{{ s['status'] }}</span></td>
+              <td class="mono">{{ s['exit_code'] if s['exit_code'] is not none else "-" }}</td>
+              <td class="mono">{{ s['created_at'] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="hint">No scans yet.</p>
+    {% endif %}
+  </section>
+{% endblock %}
+

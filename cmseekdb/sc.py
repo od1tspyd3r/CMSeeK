@@ -139,7 +139,8 @@ def check(page_source_code, site): ## Check if no generator meta tag available
         'zenid=||Congratulations! You have successfully installed your Zen Cart||Google Code for ZenCart Google||Powered by ZenCart||sideboxpzen-cart||stylesheet_zen_lightbox.css:-zencart',
         'Redakční systém IPO||cdn.antee.cz/||ipo.min.js:-ipo',
         'Built using HUGO:-hugo',
-        'This is Squarespace||End of Squarespace Headers:-squarespace'
+        'This is Squarespace||End of Squarespace Headers:-squarespace',
+        'js.hs-scripts.com||js.hs-analytics.net||js.usemessages.com||_hsq.push||hsforms.net:-hubspot'
         ]
 
         for detection_key in page_source_detection_keys:

@@ -65,6 +65,19 @@ Else:
 
 - python3 cmseek.py -u <target_url> [...]
 
+## Web UI (scan history + diffs)
+
+CMSeeK also includes a small local web interface that stores every scan in a SQLite database and renders a diff against the previous scan for the same target.
+
+- Install deps:
+  - `pip3 install -r requirements.txt`
+- Run:
+  - `python3 run_webui.py`
+- Open:
+  - `http://127.0.0.1:5000`
+
+The database file is created at `cmseekdb.access_directory/cmseek_webui.sqlite3` (defaults to the repo directory if no custom access directory is configured).
+
 Help menu from the program:
 
 ```

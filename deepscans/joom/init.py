@@ -17,6 +17,7 @@ import deepscans.joom.admin_finder as admin_finder
 import deepscans.joom.check_debug as check_debug
 import deepscans.joom.dir_list as dir_list
 import deepscans.joom.check_reg as user_registration
+import cmseekdb.latest_versions as latest_versions
 
 def start(id, url, ua, ga, source):
 
@@ -31,6 +32,7 @@ def start(id, url, ua, ga, source):
 
     # Version Detection
     version = version_detect.start(id, url, ua, ga, source)
+    latest = latest_versions.latest_joomla(ua) if version != '0' else '0'
 
     # Detecting joomla core vulnerabilities
     jcv = core_vuln.start(version)
@@ -86,6 +88,9 @@ def start(id, url, ua, ga, source):
     if version != '0':
         cmseek.result("Joomla Version: ", version)
         cmseek.update_log('joomla_version', version)
+        if latest != '0':
+            cmseek.update_log('joomla_latest_version', latest)
+            cmseek.result("Latest stable (official): ", latest)
 
     if registration[0] == '1':
         cmseek.result('User registration enabled: ', registration[1])

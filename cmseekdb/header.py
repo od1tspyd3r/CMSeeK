@@ -89,6 +89,7 @@ def check(hstring):
         'X-Powered-By: ShopFA:-shopfa',
         'X-ShopId::::X-ShardId:-shopify',
         'X-Shopify-Stage||set-cookie: _shopify||Set-Cookie: secure_customer_sig:-shopify',
+        'X-HubSpot-Correlation-Id||X-HubSpot-Request-Id||x-hubspot-ratelimit-max||x-hubspot-ratelimit-remaining||x-hubspot-ratelimit-interval-milliseconds:-hubspot',
         'SRV_ID=shoptet:-shoptet',
         'Set-Cookie: _SOLUSQUARE:-solusquare',
         'Set-Cookie: _spree_store_session:-spree',

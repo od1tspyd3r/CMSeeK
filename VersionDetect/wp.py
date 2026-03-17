@@ -39,7 +39,20 @@ def start(id, url, ua, ga, source):
                             version = fv[0]
                             cmseek.success(cmseek.bold + cmseek.fgreen + "Version Detected, WordPress Version %s" % version + cmseek.cln)
                         else:
-                            ## new version detection methods will be added in the future updates
-                            cmseek.error("Couldn't Detect Version") #sorry master thingy removed... sounded kinda cheesy -_-
-                            version = '0'
+                            cmseek.warning("OPML didn't help either... trying /readme.html")
+                            readmesrc = cmseek.getsource(url + '/readme.html', ua)
+                            if readmesrc[0] == '1':
+                                # Common patterns seen in WordPress readme.html across versions
+                                mv = re.findall(r'Version\s*([0-9]+(?:\.[0-9]+){1,3})', readmesrc[1], re.IGNORECASE)
+                                if mv != []:
+                                    version = mv[0]
+                                    cmseek.success(cmseek.bold + cmseek.fgreen + "Version Detected, WordPress Version %s" % version + cmseek.cln)
+                                else:
+                                    ## new version detection methods will be added in the future updates
+                                    cmseek.error("Couldn't Detect Version") #sorry master thingy removed... sounded kinda cheesy -_-
+                                    version = '0'
+                            else:
+                                ## new version detection methods will be added in the future updates
+                                cmseek.error("Couldn't Detect Version") #sorry master thingy removed... sounded kinda cheesy -_-
+                                version = '0'
     return version

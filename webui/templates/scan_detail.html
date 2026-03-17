@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block content %}
+  <section class="card">
+    <div class="row">
+      <div>
+        <h2>Scan #{{ scan['id'] }}</h2>
+        <div class="meta">
+          <div><span class="k">Target</span> <span class="v mono">{{ scan['target'] }}</span></div>
+          <div><span class="k">Status</span> <span class="v"><span class="pill {{ scan['status'] }}">{{ scan['status'] }}</span></span></div>
+          <div><span class="k">Exit</span> <span class="v mono">{{ scan['exit_code'] if scan['exit_code'] is not none else "-" }}</span></div>
+        </div>
+      </div>
+      <div class="right">
+        <a class="btn secondary" href="{{ url_for('index') }}">Back</a>
+      </div>
+    </div>
+  </section>
+
+  {% if diff_summary %}
+    <section class="card">
+      <h2>Diff vs previous scan</h2>
+      <div class="summary">
+        <span class="badge added">Added: {{ diff_summary['added'] }}</span>
+        <span class="badge removed">Removed: {{ diff_summary['removed'] }}</span>
+        <span class="badge changed">Changed: {{ diff_summary['changed'] }}</span>
+        <span class="badge type_changed">Type changed: {{ diff_summary['type_changed'] }}</span>
+      </div>
+      {% if diff_items %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Kind</th>
+              <th>Path</th>
+              <th>Old</th>
+              <th>New</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for it in diff_items %}
+              <tr>
+                <td><span class="badge {{ it.kind }}">{{ it.kind }}</span></td>
+                <td class="mono">{{ it.path_str }}</td>
+                <td class="mono small">{{ it.old }}</td>
+                <td class="mono small">{{ it.new }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="hint">No differences detected.</p>
+      {% endif %}
+    </section>
+  {% elif prev %}
+    <section class="card">
+      <h2>Diff vs previous scan</h2>
+      <p class="hint">Couldn’t compute a diff for these scans.</p>
+    </section>
+  {% else %}
+    <section class="card">
+      <h2>Diff vs previous scan</h2>
+      <p class="hint">No previous scan for this target yet.</p>
+    </section>
+  {% endif %}
+
+  <section class="card">
+    <h2>Result JSON (latest parsed)</h2>
+    {% if result_obj %}
+      <pre class="pre">{{ result_obj | tojson(indent=2) }}</pre>
+    {% else %}
+      <p class="hint">No parsed result JSON found yet (scan may still be running).</p>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <h2>Scan output</h2>
+    <pre class="pre">{{ scan['stdout'] }}</pre>
+  </section>
+{% endblock %}
+

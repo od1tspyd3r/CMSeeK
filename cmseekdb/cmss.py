@@ -1115,6 +1115,13 @@ shopify = {
     'deeps':'0'
 }
 
+hubspot = {
+    'name':'HubSpot CMS Hub',
+    'url':'https://www.hubspot.com/products/cms',
+    'vd':'0',
+    'deeps':'0'
+}
+
 shoptet = {
     'name':'Shoptet',
     'url':'https://www.shoptet.cz/',
