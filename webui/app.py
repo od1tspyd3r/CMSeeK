@@ -64,6 +64,8 @@ def _build_cmd(target: str, opts: Dict[str, Any]) -> list[str]:
         cmd.append("--light-scan")
     if opts.get("only_cms"):
         cmd.append("--only-cms")
+    if opts.get("wp_wpscan"):
+        cmd.append("--wp-wpscan")
     if opts.get("strict_cms"):
         cmd.extend(["--strict-cms", str(opts["strict_cms"])])
     if opts.get("ignore_cms"):
@@ -145,6 +147,7 @@ def create_app() -> Flask:
             "no_redirect": bool(request.form.get("no_redirect")),
             "light_scan": bool(request.form.get("light_scan")),
             "only_cms": bool(request.form.get("only_cms")),
+            "wp_wpscan": bool(request.form.get("wp_wpscan")),
             "strict_cms": (request.form.get("strict_cms") or "").strip(),
             "ignore_cms": (request.form.get("ignore_cms") or "").strip(),
             "user_agent": (request.form.get("user_agent") or "").strip(),

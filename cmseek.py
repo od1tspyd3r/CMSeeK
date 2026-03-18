@@ -39,6 +39,8 @@ parser.add_argument('--strict-cms')
 parser.add_argument('--skip-scanned', action="store_true")
 parser.add_argument('--light-scan', action="store_true")
 parser.add_argument('-o', '--only-cms', action="store_true")
+parser.add_argument('--wp-wpscan', action="store_true",
+                    help="Use WPScan for active WordPress plugin/theme enumeration (requires wpscan in PATH)")
 args = parser.parse_args()
 
 if args.clear_result:
@@ -60,6 +62,9 @@ if args.verbose:
 
 if args.skip_scanned:
     cmseek.skip_scanned = True
+
+if getattr(args, "wp_wpscan", False):
+    cmseek.use_wp_wpscan = True
 
 if args.follow_redirect:
     cmseek.redirect_conf = '1'

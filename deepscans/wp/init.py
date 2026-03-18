@@ -11,6 +11,7 @@ import deepscans.wp.userenum as wp_user_enum
 import deepscans.wp.vuln as wp_vuln_scan
 import deepscans.wp.pluginsdetect as wp_plugins_enum
 import deepscans.wp.themedetect as wp_theme_enum
+import deepscans.wp.wpscan_enum as wp_wpscan_enum
 import deepscans.wp.pathdisc as path_disclosure
 import deepscans.wp.check_reg as check_reg
 import cmseekdb.result as sresult
@@ -133,6 +134,14 @@ def start(id, url, ua, ga, source, detection_method):
         usernamesgen = uenum[0]
         usernames = uenum[1]
 
+        ## Optional WPScan-backed enumeration (active)
+        wpscan_plugins = []
+        wpscan_themes = []
+        if getattr(cmseek, "use_wp_wpscan", False):
+            wps_p, wps_t = wp_wpscan_enum.start(url)
+            wpscan_plugins = wps_p
+            wpscan_themes = wps_t
+
         ## Version Vulnerability Detection
         if version != '0':
             version_vuln = wp_vuln_scan.start(version, ua)
@@ -237,6 +246,23 @@ def start(id, url, ua, ga, source, detection_method):
             cmseek.update_log('wp_plugins_list', wp_plugins_list, False)
             sresult.empty_item()
 
+        if wpscan_plugins:
+            sresult.init_item("WPScan plugins: " + cmseek.bold + cmseek.fgreen + str(len(wpscan_plugins)) + cmseek.cln)
+            cmseek.update_log('wp_plugins_wpscan', wpscan_plugins, False)
+            for i, p in enumerate(wpscan_plugins):
+                line = p.get("name", "")
+                if p.get("version"):
+                    line += " (version {0})".format(p["version"])
+                if p.get("vulnerability_count"):
+                    line += " - {0} vuln(s)".format(p["vulnerability_count"])
+                if i == 0:
+                    sresult.init_sub("Plugin: " + cmseek.bold + cmseek.fgreen + line + cmseek.cln)
+                elif i == len(wpscan_plugins) - 1:
+                    sresult.end_sub("Plugin: " + cmseek.bold + cmseek.fgreen + line + cmseek.cln)
+                else:
+                    sresult.sub_item("Plugin: " + cmseek.bold + cmseek.fgreen + line + cmseek.cln)
+            sresult.empty_item()
+
         if themes_found != 0:
             themes_sorted = sorted(list(themes))
             thms_count = len(themes_sorted)
@@ -276,6 +302,23 @@ def start(id, url, ua, ga, source, detection_method):
                     sresult.end_subsub('URL: ' + cmseek.fgreen + url + '/wp-content/themes/' + thm[0] + cmseek.cln)
             cmseek.update_log('wp_themes', wpthms)
             cmseek.update_log('wp_themes_list', wp_themes_list, False)
+            sresult.empty_item()
+
+        if wpscan_themes:
+            sresult.init_item("WPScan themes: " + cmseek.bold + cmseek.fgreen + str(len(wpscan_themes)) + cmseek.cln)
+            cmseek.update_log('wp_themes_wpscan', wpscan_themes, False)
+            for i, t in enumerate(wpscan_themes):
+                line = t.get("name", "")
+                if t.get("version"):
+                    line += " (version {0})".format(t["version"])
+                if t.get("vulnerability_count"):
+                    line += " - {0} vuln(s)".format(t["vulnerability_count"])
+                if i == 0:
+                    sresult.init_sub("Theme: " + cmseek.bold + cmseek.fgreen + line + cmseek.cln)
+                elif i == len(wpscan_themes) - 1:
+                    sresult.end_sub("Theme: " + cmseek.bold + cmseek.fgreen + line + cmseek.cln)
+                else:
+                    sresult.sub_item("Theme: " + cmseek.bold + cmseek.fgreen + line + cmseek.cln)
             sresult.empty_item()
 
 

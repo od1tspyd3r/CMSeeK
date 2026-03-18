@@ -31,6 +31,7 @@ report_index = {} # Contains previous scan results
 skip_scanned = False # When set to true CMSeeK witll ignore target whose CMS had been previously detected!
 light_scan = False # When enabled, we don't perform deep-scan only detect CMS and version.
 only_cms = False # When enabled, we just detect the CMS no version or deepscan is performed.
+use_wp_wpscan = False # When enabled, use WPScan to actively enumerate WordPress plugins/themes.
 
 # all the color codes goes here
 white = "\033[97m"
